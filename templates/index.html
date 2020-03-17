@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block head %}
+<title>Decision Support system proof of concept</title>
+{% endblock %}
+
+
+{% block body %}
+<h1>Introducton to Decision support proof of concept system for COVID19 only</h1>
+
+Please redirect to <a href="/covid19">/covid</a> to start-testing
+
+{% if msg %}
+<p>Following is the instruction of using this page</p>
+
+{% endif %}
+
+
+{% endblock %}

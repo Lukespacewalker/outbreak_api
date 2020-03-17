@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block head %}
+<title>OUTPUT:Decision Support system proof of concept</title></title>
+{% endblock %}
+
+
+
+{% block body %}
+
+{% if rec %}
+<p>Following is the instruction of using this page</p>
+<h1>Output recommendation will be shown here</h1>
+<p>{{ rec }}</p>
+{% else %}
+
+<h1>Plase provide input in Json</h1>
+<p>See instruction below</p>
+{% endif %}
+
+
+
+
+
+{% endblock %}
