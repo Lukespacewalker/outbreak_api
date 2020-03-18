@@ -4,6 +4,13 @@ Automatic risk stratification, and recommendation for Thailand COVID19
 **This is a proof of concept product and subject to change before being deploy.**
 **อยู่ระหว่างทดสอบขั้นต้นมากๆ อาจมีการปลี่ยนในอนาคต**
 
+สำหรับแนวทางการจัดกลุ่มความเสี่ยงต้นฉบับ ดู XLSX file ใน static
+
+## Deployment on Heroku 
+[Pilot deployment on Heroku](https://flask-cds.herokuapp.com/covid19)
+
+## Github link
+[Outbreak API github](https://github.com/raynus/outbreak_api)
 
 
 # To-do list
