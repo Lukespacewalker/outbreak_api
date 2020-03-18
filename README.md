@@ -6,7 +6,8 @@ Automatic risk stratification, and recommendation for Thailand COVID19
 
 สำหรับแนวทางการจัดกลุ่มความเสี่ยงต้นฉบับ ดู XLSX file ใน static
 
-## Deployment on Heroku 
+## การใช้งาน
+ยิง JSON ตามแนวทาน Input JSON (มีตัวอย่างด้านล่าง) ด้วย POST request มาที่ URL ใน link
 [Pilot deployment on Heroku](https://flask-cds.herokuapp.com/covid19)
 
 ## Github link
@@ -16,7 +17,7 @@ Automatic risk stratification, and recommendation for Thailand COVID19
 # To-do list
 - Support non-Thai recommendation
 
-# Input (JSON), please submit to /covid19 route only
+# Input JSON, please submit to /covid19 route only
 
 ## JSON  ที่ส่งเข้ามา ต้องมี input ครบทุกตัว
 
