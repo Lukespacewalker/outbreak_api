@@ -32,7 +32,8 @@ Automatic risk stratification, and recommendation for Thailand COVID19
 - ถ้ามีอาการอย่างใดอย่างหนึ่งให้ใส่ "1"
 
 **travel_risk_country: (string)**
-- คำถาม = มีประวัติเดินทางไปประเทศกลุ่มเสี่ยงในช่วง 14 วันก่อน .
+- คำถาม = มีประวัติเดินทางไปประเทศกลุ่มเสี่ยงในช่วง 14 วันก่อน
+- ดูรายชื่อประเทศเสี่ยงด้วย route'/covid19/factors'
 - ให้ใช้ Country code ISO 3166-1 alpha-2 ความยาวสองตัวอักษรมาหนึ่งประเทศ
 - Example: 'CN' for China, 'TH' for Thailand
 For country code see the link below
@@ -44,6 +45,7 @@ https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2
 
 **close_risk_country: (string "0"/"1")**
 - คำถาม = บุคคลในบ้านเดินทางไปประเทศกลุ่มเสี่ยง ในช่วง 14 วันก่อน
+- ดูรายชื่อประเทศเสี่ยงด้วย route'/covid19/factors' /
 - Example: "1" for yes
 
 **int_contact: (string "0"/"1")**
