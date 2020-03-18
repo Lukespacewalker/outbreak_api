@@ -1,13 +1,13 @@
 # Outbreak_api
 Automatic risk stratification, and recommendation for Thailand COVID19
 
-** This is a proof of concept product and subject to change before being deploy. 
-อยู่ระหว่างทดสอบขั้นต้นมากๆ อาจมีการปลี่ยนในอนาคต**
+**This is a proof of concept product and subject to change before being deploy.**
+**อยู่ระหว่างทดสอบขั้นต้นมากๆ อาจมีการปลี่ยนในอนาคต**
+
+
 
 # To-do list
 - Support non-Thai recommendation
-- Input validation
-- Return รายชื่อประเทศกลุ่มเสี่ยง และปัจัยเสี่ยงอื่นๆ
 
 # Input (JSON), please submit to /covid19 route only
 
@@ -94,8 +94,6 @@ Return all other risk factors and other configuration e.g. Fever temperature thr
 "RISK_COUNTRIES":['DE','CN','IT','KR','IR','FR','ES','US','CH','NO','JP','DK','NL','SE','UK'],
 "FEVER_THRESHOLD":37.5
 }
-
-
 
 
 # Database
