@@ -4,7 +4,8 @@ Automatic risk stratification, and recommendation for Thailand COVID19
 **This is a proof of concept product and subject to change before being deploy.**
 **อยู่ระหว่างทดสอบขั้นต้นมากๆ อาจมีการปลี่ยนในอนาคต**
 
-สำหรับแนวทางการจัดกลุ่มความเสี่ยงต้นฉบับ ดู XLSX file ใน static
+สำหรับแนวทางการจัดกลุ่มความเสี่ยงต้นฉบับ ดู XLSX file ใน static หรือ เข้าไปดูบน data.go.th  
+https://data.go.th/dataset/covid19
 
 ## การใช้งาน
 ยิง JSON ตามแนวทาน Input JSON (มีตัวอย่างด้านล่าง) ด้วย POST request มาที่ URL ใน link
