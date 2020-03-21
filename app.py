@@ -1,11 +1,11 @@
-from flask import Flask,render_template,request,jsonify
+from flask import Flask,render_template,request,jsonify,make_response
 from flask_pymongo import PyMongo
 from itertools import compress
 from bson import json_util
 import pandas as pd
 import requests
 import json
-from pandas.io.json import json_normalize
+
 
 
 
@@ -57,7 +57,7 @@ def metadata_init():
     # Temporary use, will replace with data.go.th api
 
 
-    METADATA=json_normalize(meta_obj.find({}))
+    METADATA=pd.json_normalize(meta_obj.find({}))
     METADATA.columns=map(str.lower,METADATA.columns)
     METADATA.columns=METADATA.columns.str.strip()
     METADATA['data_type_mapped']=METADATA['data_type'].map(VAR_TYPE_MAP).fillna(2)
@@ -71,7 +71,6 @@ METADATA=metadata_init()
 
 #Use ISO-2 code
 ALLOWED_INPUT=list(METADATA[METADATA['mandatory_field_mapped']>0]['attribute'])
-print(ALLOWED_INPUT)
 #ALLOWED_INPUT=['fever','one_uri_symp','travel_risk_country','covid19_contact','close_risk_country','int_contact','med_prof','close_con']
 
 
@@ -169,9 +168,10 @@ def dump_rules():
     return rule
 
 #Show all servey question along with variable
-@app.route('/covid19/questions')
+@app.route('/covid19/questions',methods=['GET','POST'])
 def show_question():
-    return 'questions'
+    questions=json_util.dumps(meta_obj.find({}), indent=1, ensure_ascii=False).encode('utf8')
+    return questions
 
 @app.route('/covid19',methods=['GET','POST'])
 def display():
@@ -190,20 +190,36 @@ def display():
             recommendation=list(db_obj.find(input_json,{'_id':0,'risk_level':1,'gen_action':1,'spec_action':1}))
 
             rec=[i for n, i in enumerate(recommendation) if i not in recommendation[n + 1:]]
-            return jsonify(rec)
+            response = make_response(jsonify(rec), 200)
+            response.headers.add("Access-Control-Allow-Origin", "*")
+            response.headers.add("Access-Control-Allow-Headers", "*")
+            response.headers.add("Access-Control-Allow-Methods", "*")
+            return response
 
         else:
             rec="None JSON POST"
             return rec
 
     else:
-
+        #For GET
 
         #recommendation=list(mongo.db.COVID19_action.find(input,{'_id':0,'gen_action':1,'spec_action':1}))
 
         #https://stackoverflow.com/questions/9427163/remove-duplicate-dict-in-list-in-python
         #rec=[i for n, i in enumerate(recommendation) if i not in recommendation[n + 1:]]
-        return render_template('output.html')
+        input_json_str=json.dumps(dict(request.args))
+        input_json=json.loads(input_json_str)
+        input_json=input_validation(input_json)
+        if ERR_DICT_KEY in input_json.keys():
+            return input_json
+
+        input_json=check_other(input_json)
+
+        recommendation=list(db_obj.find(input_json,{'_id':0,'risk_level':1,'gen_action':1,'spec_action':1}))
+
+        rec=[i for n, i in enumerate(recommendation) if i not in recommendation[n + 1:]]
+        return jsonify(rec)
+        #return render_template('output.html')
 
 if __name__ == "__main__":
-    app.run(debug = True,port=5000)
+    app.run(debug = False,port=5000)
