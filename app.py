@@ -2,7 +2,13 @@ from flask import Flask,render_template,request,jsonify
 from flask_pymongo import PyMongo
 from itertools import compress
 from bson import json_util
-#import pymongo
+import pandas as pd
+import requests
+import json
+from pandas.io.json import json_normalize
+
+
+
 app=Flask(__name__)
 
 
@@ -13,15 +19,66 @@ app=Flask(__name__)
 app.config["MONGO_URI"]="mongodb+srv://admin:admin@cluster0-esnsm.mongodb.net/Outbreak_casedef?retryWrites=true&w=majority"
 mongo=PyMongo(app)
 
-#Use ISO-2 code
-ALLOWED_INPUT=['fever','one_uri_symp','travel_risk_country','covid19_contact','close_risk_country','int_contact','med_prof','close_con']
+db_obj=mongo.db.COVID19_action_test
+meta_obj=mongo.db.metadata
 
 RISK_FACTORS={
 "RISK_COUNTRIES":['DE','CN','IT','KR','IR','FR','ES','US','CH','NO','JP','DK','NL','SE','UK'],
 "FEVER_THRESHOLD":37.5
 }
 
+#Will replace the rest with string
+VAR_TYPE_MAP={
+    'numeric/float':1,
+    'numeric':1,
+    'float':1,
+    'String':2
+}
+
 ERR_DICT_KEY='missing_field'
+
+
+
+#The funcion update data type from mongo db
+#use input from metadata sheet
+
+#For mongodb var type see
+#https://docs.mongodb.com/manual/reference/operator/aggregation/type/#available-types
+# 1-Double
+# 2-String
+# 8-Boolean
+# 16-Int
+
+#Import is to string in defaut so the initiate type can be set to 2
+
+
+# Will be spin out
+def metadata_init():
+    # Temporary use, will replace with data.go.th api
+
+
+    METADATA=json_normalize(meta_obj.find({}))
+    METADATA.columns=map(str.lower,METADATA.columns)
+    METADATA.columns=METADATA.columns.str.strip()
+    METADATA['data_type_mapped']=METADATA['data_type'].map(VAR_TYPE_MAP).fillna(2)
+    METADATA['mandatory_field_mapped']=METADATA['mandatory_field'].fillna(0)
+    METADATA[["data_type_mapped", "mandatory_field_mapped"]] = METADATA[["data_type_mapped", "mandatory_field_mapped"]].apply(pd.to_numeric)
+    return METADATA
+
+
+METADATA=metadata_init()
+
+
+#Use ISO-2 code
+ALLOWED_INPUT=list(METADATA[METADATA['mandatory_field_mapped']>0]['attribute'])
+print(ALLOWED_INPUT)
+#ALLOWED_INPUT=['fever','one_uri_symp','travel_risk_country','covid19_contact','close_risk_country','int_contact','med_prof','close_con']
+
+
+#Update mongodb data type based on METADATA
+# (Default import is string)
+
+
 
 def input_validation(input_d):
     #Remove irrevant item
@@ -36,19 +93,54 @@ def input_validation(input_d):
 
     return temp_dict
 
+#Helper function
+#Input : data
+#Output : numeric, coverted string to numeric or 0 if irrelvant character
+#Convert all to double/numeric
+def is_numeric(s):
+    try:
+        float(s)
+        return True
+    except ValueError:
+        return False
 
+def input_int(input):
+    converted_input =0
+    if is_numeric(input):
+        converted_input=float(input)
+    else:
+        converted_input=input
+    return converted_input
+
+
+
+# Update require processing
+# Support Fever of 0,1 and RISK_COUNTRIES of 0,1 for legacy
 def check_other(input_d):
     #Check risk country
-    if input_d['travel_risk_country'] in RISK_FACTORS["RISK_COUNTRIES"]:
-        input_d['travel_risk_country']="1"
+
+        #Check if old 0,1 were used
+    if is_numeric(input_d['travel_risk_country']):
+        temp_num=float(input_d['travel_risk_country'])
+        if temp_num>0:
+            input_d['travel_risk_country']=1
+        else:
+            input_d['travel_risk_country']=0
     else:
-        input_d['travel_risk_country']="0"
+        if input_d['travel_risk_country'] in RISK_FACTORS["RISK_COUNTRIES"]:
+            input_d['travel_risk_country']=1
+        else:
+            input_d['travel_risk_country']=0
 
     #Check fever
     if float(input_d['fever']) >RISK_FACTORS["FEVER_THRESHOLD"]:
-        input_d['fever']="1"
+        input_d['fever']=1
     else:
-        input_d['fever']="0"
+        temp_fever=float(input_d['fever'])
+        if temp_fever>0:
+            input_d['fever']=1
+        else:
+            input_d['fever']=0
 
     return input_d
 
@@ -60,21 +152,28 @@ def home_page():
 
 
     return render_template('index.html')
+
 @app.route('/covid19/factors',methods=['GET','POST'])
 def show_factor():
     return jsonify(RISK_FACTORS)
 
+
+#Dump all ruels to JSON file
 @app.route('/covid19/rules',methods=['GET','POST'])
 def dump_rules():
-    rule=json_util.dumps(mongo.db.COVID19_action.find({}), indent=1, ensure_ascii=False).encode('utf8')
+    rule=json_util.dumps(db_obj.find({}), indent=1, ensure_ascii=False).encode('utf8')
     return rule
 
+#Show all servey question along with variable
+@app.route('/covid19/questions')
+def show_question():
+    return 'questions'
 
 @app.route('/covid19',methods=['GET','POST'])
 def display():
     #For get, show API manual at this momemt
 
-
+    #db_type_update()
     if request.method=="POST":
         if request.is_json:
             input_json=request.get_json()
@@ -84,13 +183,13 @@ def display():
 
             input_json=check_other(input_json)
 
-            recommendation=list(mongo.db.COVID19_action.find(input_json,{'_id':0,'risk_level':1,'gen_action':1,'spec_action':1}))
+            recommendation=list(db_obj.find(input_json,{'_id':0,'risk_level':1,'gen_action':1,'spec_action':1}))
 
             rec=[i for n, i in enumerate(recommendation) if i not in recommendation[n + 1:]]
             return jsonify(rec)
 
         else:
-            rec="None JSON PPST"
+            rec="None JSON POST"
             return rec
 
     else:
