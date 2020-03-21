@@ -5,7 +5,7 @@ from bson import json_util
 import pandas as pd
 import requests
 import json
-from pandas.io.json import json_normalize
+
 
 
 
@@ -57,7 +57,7 @@ def metadata_init():
     # Temporary use, will replace with data.go.th api
 
 
-    METADATA=json_normalize(meta_obj.find({}))
+    METADATA=pd.json_normalize(meta_obj.find({}))
     METADATA.columns=map(str.lower,METADATA.columns)
     METADATA.columns=METADATA.columns.str.strip()
     METADATA['data_type_mapped']=METADATA['data_type'].map(VAR_TYPE_MAP).fillna(2)
@@ -168,9 +168,10 @@ def dump_rules():
     return rule
 
 #Show all servey question along with variable
-@app.route('/covid19/questions')
+@app.route('/covid19/questions',methods=['GET','POST'])
 def show_question():
-    return 'questions'
+    questions=json_util.dumps(meta_obj.find({}), indent=1, ensure_ascii=False).encode('utf8')
+    return questions
 
 @app.route('/covid19',methods=['GET','POST'])
 def display():
@@ -217,4 +218,4 @@ def display():
         #return render_template('output.html')
 
 if __name__ == "__main__":
-    app.run(debug = True,port=5000)
+    app.run(debug = False,port=5000)
