@@ -81,14 +81,16 @@ https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2
 # Example
 ## Input JSON to /covid19
 
-{"fever":"37.55","one_uri_symp":"1","travel_risk_country":"SG","close_con":"1","covid19_contact":"0","close_risk_country":"0","int_contact":"0","int_contact":"0","med_prof":"0"}
+{"fever":"37.55","one_uri_symp":1,"travel_risk_country":0,"close_con":1,"covid19_contact":0,"close_risk_country":0,"int_contact":0,"int_contact":0,"med_prof":1}
 
 ## Return JSON
-  {
-    "gen_action": "ล้างมือ สวมหน้ากาก หลีกเลี่ยงที่แออัด",
-    "risk_level": "4",
-    "spec_action": "ให้ติดต่อสถานพยาบาลทันที"
-  }
+[
+    {
+        "gen_action": "ล้างมือ สวมหน้ากาก หลีกเลี่ยงที่แออัด",
+        "risk_level": "4",
+        "spec_action": "ให้ติดต่อสถานพยาบาลทันที"
+    }
+]
 
 
 # Other route
