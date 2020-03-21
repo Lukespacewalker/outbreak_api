@@ -142,6 +142,10 @@ def check_other(input_d):
         else:
             input_d['fever']=0
 
+    #Get the rest done
+    for i in ALLOWED_INPUT:
+        input_d[i]=input_int(input_d[i])
+
     return input_d
 
 
