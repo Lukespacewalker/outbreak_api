@@ -9,7 +9,9 @@ https://data.go.th/dataset/covid19
 
 ## การใช้งาน
 ยิง JSON ตามแนวทาน Input JSON (มีตัวอย่างด้านล่าง) ด้วย POST request มาที่ URL ใน link
-[Pilot deployment on Heroku](https://flask-cds.herokuapp.com/covid19)
+[Outbreak API URL](https://flask-cds.herokuapp.com/covid19)  
+  
+  สำหรับ GET Request โปรดใส่ตัวแปรให้ครบเหมือน Input JSON ด้านล่าง มาที่ URL เดียวกัน
 
 ## Github link
 [Outbreak API github](https://github.com/raynus/outbreak_api)
@@ -114,4 +116,4 @@ Return all other risk factors and other configuration e.g. Fever temperature thr
 
 # Database
 Mongodb on Atlas cluster (Free tier)
-For local deployment, please import the covid19_csv.csv in static\csv_for_mongodb
+สำหรับท่านที่ต้องการทดสอบ นอกจากจะต่อโดยใช้ URL กับในตัวprogram แล้วยัง Import csv 2 file อยู่ใน static เข้าไปใน Local mongodb server ได้ครับ
