@@ -13,12 +13,8 @@ https://data.go.th/dataset/covid19
   
   สำหรับ GET Request โปรดใส่ตัวแปรให้ครบเหมือน Input JSON ด้านล่าง มาที่ URL เดียวกัน
 
-## Github link
-[Outbreak API github](https://github.com/raynus/outbreak_api)
-
-
 # To-do list
-- Support GET Request
+- แก้ bug ในบาง request จะ search ไม่เจอ แล้ว return null
 
 # Input JSON, please submit POST to /covid19 route only
 
