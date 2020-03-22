@@ -13,10 +13,10 @@ app=Flask(__name__)
 
 
 #For local database
-app.config["MONGO_URI"]="mongodb://localhost:27017/Outbreak_casedef"
+#app.config["MONGO_URI"]="mongodb://localhost:27017/Outbreak_casedef"
 
 #For Mongodb Atlas
-#app.config["MONGO_URI"]="mongodb+srv://admin:admin@cluster0-esnsm.mongodb.net/Outbreak_casedef?retryWrites=true&w=majority"
+app.config["MONGO_URI"]="mongodb+srv://admin:admin@cluster0-esnsm.mongodb.net/Outbreak_casedef?retryWrites=true&w=majority"
 mongo=PyMongo(app)
 
 db_obj=mongo.db.COVID19_action_test
