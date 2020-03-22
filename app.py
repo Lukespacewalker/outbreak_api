@@ -13,13 +13,13 @@ app=Flask(__name__)
 
 
 #For local database
-#app.config["MONGO_URI"]="mongodb://localhost:27017/Outbreak_casedef"
+app.config["MONGO_URI"]="mongodb://localhost:27017/Outbreak_casedef"
 
 #For Mongodb Atlas
-app.config["MONGO_URI"]="mongodb+srv://admin:admin@cluster0-esnsm.mongodb.net/Outbreak_casedef?retryWrites=true&w=majority"
+#app.config["MONGO_URI"]="mongodb+srv://admin:admin@cluster0-esnsm.mongodb.net/Outbreak_casedef?retryWrites=true&w=majority"
 mongo=PyMongo(app)
 
-db_obj=mongo.db.COVID19_action
+db_obj=mongo.db.COVID19_action_test
 meta_obj=mongo.db.metadata
 
 RISK_FACTORS={
@@ -119,18 +119,25 @@ def check_other(input_d):
     #Check risk country
 
         #Check if old 0,1 were used
+    print(input_d['travel_risk_country'])
     if is_numeric(input_d['travel_risk_country']):
         temp_num=float(input_d['travel_risk_country'])
+        print('inside yes')
+        print(temp_num)
+
         if temp_num>0:
             input_d['travel_risk_country']=1
         else:
             input_d['travel_risk_country']=0
     else:
+        print('inside else')
+        print(input_d['travel_risk_country'] in RISK_FACTORS["RISK_COUNTRIES"])
         if input_d['travel_risk_country'] in RISK_FACTORS["RISK_COUNTRIES"]:
             input_d['travel_risk_country']=1
         else:
             input_d['travel_risk_country']=0
-
+    print('final travel_risk_country')
+    print(input_d['travel_risk_country'])
     #Check fever
 
     if float(input_d['fever']) >=RISK_FACTORS["FEVER_THRESHOLD"]:
@@ -145,6 +152,7 @@ def check_other(input_d):
             input_d['fever']=0
 
     #Get the rest done
+    #Convert to int/float
     for i in ALLOWED_INPUT:
         if not i in ['fever','travel_risk_country']:
             input_d[i]=input_int(input_d[i])
@@ -189,7 +197,7 @@ def display():
             if ERR_DICT_KEY in input_json.keys():
                 return input_json
 
-            input_json=check_other(input_json)
+            #input_json=check_other(input_json)
             print(input_json)
             recommendation=list(db_obj.find(input_json,{'_id':0,'risk_level':1,'gen_action':1,'spec_action':1}))
 
@@ -213,11 +221,11 @@ def display():
         #rec=[i for n, i in enumerate(recommendation) if i not in recommendation[n + 1:]]
         input_json_str=json.dumps(dict(request.args))
         input_json=json.loads(input_json_str)
-        input_json=input_validation(input_json)
+        #input_json=input_validation(input_json)
         if ERR_DICT_KEY in input_json.keys():
             return input_json
 
-        input_json=check_other(input_json)
+        #input_json=check_other(input_json)
 
         recommendation=list(db_obj.find(input_json,{'_id':0,'risk_level':1,'gen_action':1,'spec_action':1}))
 
@@ -226,4 +234,4 @@ def display():
         #return render_template('output.html')
 
 if __name__ == "__main__":
-    app.run(debug = False,port=5000)
+    app.run(debug = True,port=5000)
