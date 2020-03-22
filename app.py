@@ -19,7 +19,7 @@ app=Flask(__name__)
 app.config["MONGO_URI"]="mongodb+srv://admin:admin@cluster0-esnsm.mongodb.net/Outbreak_casedef?retryWrites=true&w=majority"
 mongo=PyMongo(app)
 
-db_obj=mongo.db.COVID19_action_test
+db_obj=mongo.db.COVID19_action
 meta_obj=mongo.db.metadata
 
 RISK_FACTORS={
