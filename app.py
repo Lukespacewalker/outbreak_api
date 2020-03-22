@@ -55,13 +55,16 @@ ERR_DICT_KEY='missing_field'
 # Will be spin out
 def metadata_init():
     # Temporary use, will replace with data.go.th api
+    sanitized = json.loads(json_util.dumps(meta_obj.find({})))
+    normalized = pd.json_normalize(sanitized)
+    METADATA = pd.DataFrame(normalized)
 
 
-    METADATA=pd.json_normalize(meta_obj.find({}))
     METADATA.columns=map(str.lower,METADATA.columns)
     METADATA.columns=METADATA.columns.str.strip()
     METADATA['data_type_mapped']=METADATA['data_type'].map(VAR_TYPE_MAP).fillna(2)
     METADATA['mandatory_field_mapped']=METADATA['mandatory_field'].fillna(0)
+
     METADATA[["data_type_mapped", "mandatory_field_mapped"]] = METADATA[["data_type_mapped", "mandatory_field_mapped"]].apply(pd.to_numeric)
     return METADATA
 
@@ -70,10 +73,8 @@ METADATA=metadata_init()
 
 
 #Use ISO-2 code
-#prinnt(METADATA['attribute'])
-#print(METADATA[['attribute','mandatory_field_mapped']])
+
 ALLOWED_INPUT=list(METADATA[METADATA['mandatory_field_mapped']>0]['attribute'])
-#ALLOWED_INPUT=['fever','one_uri_symp','travel_risk_country','covid19_contact','close_risk_country','int_contact','med_prof','close_con']
 
 
 #Update mongodb data type based on METADATA
@@ -85,16 +86,13 @@ def input_validation(input_d):
     #Remove irrevant item
     temp_dict={key:value for key, value in input_d.items() if key in ALLOWED_INPUT}
     not_in_allow=[not i in  temp_dict.keys() for i in ALLOWED_INPUT]
-    #print(ALLOWED_INPUT)
-    #print(not_in_allow)
-    #print(temp_dict)
-    #print(sum(not_in_allow))
+
     if sum(not_in_allow) > 0:
         mis_input=" ".join(list(compress(ALLOWED_INPUT,not_in_allow)))
         temp_dict={ERR_DICT_KEY:mis_input}
 
     #replace dict with ERR_DICT_KEY to signal error
-    #print(temp_dict)
+
     return temp_dict
 
 #Helper function
@@ -124,25 +122,22 @@ def check_other(input_d):
     #Check risk country
 
         #Check if old 0,1 were used
-    #print(input_d['travel_risk_country'])
+
     if is_numeric(input_d['travel_risk_country']):
         temp_num=float(input_d['travel_risk_country'])
-        #print('inside yes')
-        #print(temp_num)
+
 
         if temp_num>0:
             input_d['travel_risk_country']=1
         else:
             input_d['travel_risk_country']=0
     else:
-        #print('inside else')
-        #print(input_d['travel_risk_country'] in RISK_FACTORS["RISK_COUNTRIES"])
+
         if input_d['travel_risk_country'] in RISK_FACTORS["RISK_COUNTRIES"]:
             input_d['travel_risk_country']=1
         else:
             input_d['travel_risk_country']=0
-    #print('final travel_risk_country')
-    #print(input_d['travel_risk_country'])
+
     #Check fever
 
     if float(input_d['fever']) >=RISK_FACTORS["FEVER_THRESHOLD"]:
@@ -198,12 +193,12 @@ def display():
     if request.method=="POST":
         if request.is_json:
             input_json=request.get_json()
-            #input_json=input_validation(input_json)
+            input_json=input_validation(input_json)
             if ERR_DICT_KEY in input_json.keys():
                 return input_json
 
             #input_json=check_other(input_json)
-            #print(input_json)
+
             recommendation=list(db_obj.find(input_json,{'_id':0,'risk_level':1,'gen_action':1,'spec_action':1}))
 
             rec=[i for n, i in enumerate(recommendation) if i not in recommendation[n + 1:]]
