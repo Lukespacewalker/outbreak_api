@@ -1,8 +1,7 @@
 # Outbreak_api
 Automatic risk stratification, and recommendation for Thailand COVID19
 
-**This is a proof of concept product and subject to change before being deploy.**
-**อยู่ระหว่างทดสอบขั้นต้นมากๆ อาจมีการปลี่ยนในอนาคต**
+**ยังอยู่ระหว่างทดสอบขั้นต้นมากๆ อาจมีการปลี่ยนในอนาคต**
 
 สำหรับแนวทางการจัดกลุ่มความเสี่ยงต้นฉบับ ดู XLSX file ใน static หรือ เข้าไปดูบน data.go.th  
 https://data.go.th/dataset/covid19
