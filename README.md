@@ -97,8 +97,8 @@ https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2
 Return all JSON rules from Mongodb
 (ดึงฐานข้อมูล protocol ที่ใช้ในการจัดกลุ่ม และคำแนะนำทั้งหมด)
 
-## '/covid19/questions
-แสดงข้อคำถาม + ตัวแปร และ metadata
+## '/covid19/questionsง
+แสดงข้อคำถาม สำหรับใช้ในแบบสอบถาม + ตัวแปร และ metadata
 
 ## '/covid19/factors'
 Return all other risk factors and other configuration e.g. Fever temperature threshold and risk countries list   
