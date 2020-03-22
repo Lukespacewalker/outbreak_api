@@ -1,7 +1,11 @@
 # Outbreak_api
 Automatic risk stratification, and recommendation for Thailand COVID19
 
-**ยังอยู่ระหว่างทดสอบขั้นต้นมากๆ อาจมีการปลี่ยนในอนาคต**
+**ยังอยู่ระหว่างทดสอบขั้นต้นมากๆ อาจมีการปลี่ยนในอนาคต**  
+
+## Update 23/3/2020
+เพื่อให้ง่ายต่อการใช้งานและลดความซับซ้อน เลยตัดสินใจเอา input checking ออกทั้งหมด 
+หลังจากนี้ ตัวแปรทั้งหมดที่ส่งเข้ามาที่ /covid19 ให้ใช้ "0" กับ "1" เท่านั้นครับ
 
 สำหรับแนวทางการจัดกลุ่มความเสี่ยงต้นฉบับ ดู XLSX file ใน static หรือ เข้าไปดูบน data.go.th  
 https://data.go.th/dataset/covid19
@@ -12,26 +16,25 @@ https://data.go.th/dataset/covid19
   
   สำหรับ GET Request โปรดใส่ตัวแปรให้ครบเหมือน Input JSON ด้านล่าง มาที่ URL เดียวกัน
 
-# To-do list (สำหรับท่านที่อยากช่วยเหลือ โปรดส่ง code เข้ามาที่ dev branch)
-- แก้ bug ในบาง request จะ search ไม่เจอ แล้ว return null
-- ดังและแสดงสถิติ COVID 19 รายวัน จาก ข้อมูล กรมควบคุมโรคใน data.go.th
+## To-do-list
+- ระบบจัดการให้รองรับโรอื่นๆ ในอนาคตและการปรับแก้ criteria
 
 # Input JSON, please submit POST to /covid19 route only
 
 ## JSON  ที่ส่งเข้ามา ต้องมี input ครบทุกตัว
 
-**fever: (numeric/float)**
+**fever: (string "0", "1")**
 - คำถาม = มีไข้สูง 37.5 องศา (Celsius) ขึ้นไป หรือ รู้สึกว่ามีไข้ 
 - ตัวเลขอุณหภูมิ ให้ใส่ตามจริง
 - ในกรณีรู้สึกว่ามีไข้ ให้ใส่ตัวเลข 37.5 
 - หากรู้สึกว่าไม่มีไข้หรือไม่ทราบอุณหภูมิ ใหใส่ 0
 - Example : 37.55
 
-**one_uri_symp: (string or numeric/float: 0, 1)**
+**one_uri_symp: (string "0", "1")**
 - คำถาม = มีอาการอย่างหนึ่งในนี้  ( ไอ เจ็บคอ หอบเหนื่อยผิดปกติ มีน้ำมูก )
 - ถ้ามีอาการอย่างใดอย่างหนึ่งให้ใส่ "1"
 
-**travel_risk_country: (numeric/float: 0,1 หรือ string รหัสประเทศ ISO 3166-1 alpha-2)**
+**travel_risk_country: (string "0", "1")**
 - คำถาม = มีประวัติเดินทางไปประเทศกลุ่มเสี่ยงในช่วง 14 วันก่อน
 - ดูรายชื่อประเทศเสี่ยงด้วย route'/covid19/factors'
 - ให้ใช้ Country code ISO 3166-1 alpha-2 ความยาวสองตัวอักษรมาหนึ่งประเทศ
@@ -39,24 +42,24 @@ https://data.go.th/dataset/covid19
 For country code see the link below
 https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2
 
-**covid19_contact: (string or numeric/float: 0, 1)**
+**covid19_contact: (string "0", "1")**
 - คำถาม = อยู่ใกล้ชิดกับผู้ป่วยยืนยัน COVID-19 (ใกล้กว่า 1 เมตร นานเกิน 5 นาที) ในช่วง 14 วันก่อน  หรือ ไปสนามมวยลุมพินี  หรือ ผับที่มีการพบผู้ติดเชื้อ
 - Example: "1" for yes
 
-**close_risk_country: (string or numeric/float: 0, 1)**
+**close_risk_country: (string "0", "1")**
 - คำถาม = บุคคลในบ้านเดินทางไปประเทศกลุ่มเสี่ยง ในช่วง 14 วันก่อน
 - ดูรายชื่อประเทศเสี่ยงด้วย route'/covid19/factors' /
 - Example: "1" for yes
 
-**int_contact: (string or numeric/float: 0, 1)**
+**int_contact: (string "0", "1")**
 - คำถาม = ประกอบอาชีพใกล้ชิดกับชาวต่างชาติ
 - Example "1" for yes
 
-**med_prof: (string or numeric/float: 0, 1)**
+**med_prof: (string "0", "1")**
 - คำถาม = เป็นบุคลากรทางการแพทย์
 - Example "1" for yes
 
-**close_con: (string or numeric/float: 0, 1)**
+**close_con: (string "0", "1")**
 - คำถาม = มีผู้ใกล้ชิดป่วยเป็นไข้หวัดพร้อมกัน มากกว่า 5 คน ในช่วง 14 วันก่อน
 - Example "1" for yes
 
@@ -78,8 +81,9 @@ https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2
 
 # Example
 ## Input JSON to /covid19
-
-{"fever":"37.55","one_uri_symp":1,"travel_risk_country":0,"close_con":1,"covid19_contact":0,"close_risk_country":0,"int_contact":0,"int_contact":0,"med_prof":1}
+  
+{"fever":"1","one_uri_symp":"1","travel_risk_country":"1","close_con":"1","covid19_contact":"0","close_risk_country":"1","int_contact":"0","med_prof":"0"}
+  
 
 ## Return JSON
 [
@@ -89,7 +93,6 @@ https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2
         "spec_action": "ให้ติดต่อสถานพยาบาลทันที"
     }
 ]
-
 
 # Other route
 
@@ -102,7 +105,8 @@ Return all JSON rules from Mongodb
 
 ## '/covid19/factors'
 Return all other risk factors and other configuration e.g. Fever temperature threshold and risk countries list   
-(รหัสประเทศเสี่่ยง)
+รหัสประเทศเสี่่ยง สหรับตรวจสอบ ดูได้จาก https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2  
+เกณฑ์ไข้ใช้ที่ 37.5
 - Example
 {
 "RISK_COUNTRIES":['DE','CN','IT','KR','IR','FR','ES','US','CH','NO','JP','DK','NL','SE','UK'],
