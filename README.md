@@ -13,8 +13,9 @@ https://data.go.th/dataset/covid19
   
   สำหรับ GET Request โปรดใส่ตัวแปรให้ครบเหมือน Input JSON ด้านล่าง มาที่ URL เดียวกัน
 
-# To-do list
+# To-do list (สำหรับท่านที่อยากช่วยเหลือ โปรดส่ง code เข้ามาที่ dev branch)
 - แก้ bug ในบาง request จะ search ไม่เจอ แล้ว return null
+- ดังและแสดงสถิติ COVID 19 รายวัน จาก ข้อมูล กรมควบคุมโรคใน data.go.th
 
 # Input JSON, please submit POST to /covid19 route only
 
