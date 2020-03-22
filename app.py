@@ -132,18 +132,22 @@ def check_other(input_d):
             input_d['travel_risk_country']=0
 
     #Check fever
-    if float(input_d['fever']) >RISK_FACTORS["FEVER_THRESHOLD"]:
+
+    if float(input_d['fever']) >=RISK_FACTORS["FEVER_THRESHOLD"]:
         input_d['fever']=1
+
     else:
         temp_fever=float(input_d['fever'])
-        if temp_fever>0:
+
+        if temp_fever==float(1):
             input_d['fever']=1
         else:
             input_d['fever']=0
 
     #Get the rest done
     for i in ALLOWED_INPUT:
-        input_d[i]=input_int(input_d[i])
+        if not i in ['fever','travel_risk_country']:
+            input_d[i]=input_int(input_d[i])
 
     return input_d
 
@@ -186,7 +190,7 @@ def display():
                 return input_json
 
             input_json=check_other(input_json)
-
+            print(input_json)
             recommendation=list(db_obj.find(input_json,{'_id':0,'risk_level':1,'gen_action':1,'spec_action':1}))
 
             rec=[i for n, i in enumerate(recommendation) if i not in recommendation[n + 1:]]
