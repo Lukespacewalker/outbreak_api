@@ -205,7 +205,7 @@ def display():
             recommendation=list(db_obj.find(input_json,{'_id':0,'risk_level':1,'gen_action':1,'spec_action':1}))
 
             rec=[i for n, i in enumerate(recommendation) if i not in recommendation[n + 1:]]
-            response = make_response(jsonify(rec), 200)
+            response = make_response(jsonify(rec[0]), 200)
             response.headers.add("Access-Control-Allow-Origin", "*")
             response.headers.add("Access-Control-Allow-Headers", "*")
             response.headers.add("Access-Control-Allow-Methods", "*")
