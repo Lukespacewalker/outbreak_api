@@ -36,7 +36,8 @@ VAR_TYPE_MAP={
 }
 
 ERR_DICT_KEY='missing_field'
-
+INPUT_VALIDATE=True
+CHECK_OTHER=True
 
 
 #The funcion update data type from mongo db
@@ -128,34 +129,34 @@ def check_other(input_d):
 
 
         if temp_num>0:
-            input_d['travel_risk_country']=1
+            input_d['travel_risk_country']="1"
         else:
-            input_d['travel_risk_country']=0
+            input_d['travel_risk_country']="0"
     else:
 
         if input_d['travel_risk_country'] in RISK_FACTORS["RISK_COUNTRIES"]:
-            input_d['travel_risk_country']=1
+            input_d['travel_risk_country']="1"
         else:
-            input_d['travel_risk_country']=0
+            input_d['travel_risk_country']="0"
 
     #Check fever
 
     if float(input_d['fever']) >=RISK_FACTORS["FEVER_THRESHOLD"]:
-        input_d['fever']=1
+        input_d['fever']="1"
 
     else:
         temp_fever=float(input_d['fever'])
 
-        if temp_fever==float(1):
-            input_d['fever']=1
+        if temp_fever==1:
+            input_d['fever']="1"
         else:
-            input_d['fever']=0
+            input_d['fever']="0"
 
     #Get the rest done
     #Convert to int/float
     for i in ALLOWED_INPUT:
         if not i in ['fever','travel_risk_country']:
-            input_d[i]=input_int(input_d[i])
+            input_d[i]=str(input_d[i])
 
     return input_d
 
@@ -193,11 +194,12 @@ def display():
     if request.method=="POST":
         if request.is_json:
             input_json=request.get_json()
-            input_json=input_validation(input_json)
+            if INPUT_VALIDATE:
+                input_json=input_validation(input_json)
             if ERR_DICT_KEY in input_json.keys():
                 return input_json
-
-            #input_json=check_other(input_json)
+            if CHECK_OTHER:
+                input_json=check_other(input_json)
 
             recommendation=list(db_obj.find(input_json,{'_id':0,'risk_level':1,'gen_action':1,'spec_action':1}))
 
@@ -221,11 +223,12 @@ def display():
         #rec=[i for n, i in enumerate(recommendation) if i not in recommendation[n + 1:]]
         input_json_str=json.dumps(dict(request.args))
         input_json=json.loads(input_json_str)
-        #input_json=input_validation(input_json)
+        if INPUT_VALIDATE:
+            input_json=input_validation(input_json)
         if ERR_DICT_KEY in input_json.keys():
             return input_json
-
-        #input_json=check_other(input_json)
+        if CHECK_OTHER:
+            input_json=check_other(input_json)
 
         recommendation=list(db_obj.find(input_json,{'_id':0,'risk_level':1,'gen_action':1,'spec_action':1}))
 
