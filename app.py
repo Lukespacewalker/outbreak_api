@@ -1,5 +1,6 @@
 from flask import Flask,render_template,request,jsonify,make_response
 from flask_pymongo import PyMongo
+from flask_cors import CORS
 from itertools import compress
 from bson import json_util
 import pandas as pd
@@ -10,7 +11,7 @@ import json
 
 
 app=Flask(__name__)
-
+CORS(app)
 
 #For local database
 #app.config["MONGO_URI"]="mongodb://localhost:27017/Outbreak_casedef"
